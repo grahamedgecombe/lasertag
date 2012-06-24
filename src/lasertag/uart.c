@@ -1,4 +1,5 @@
 #include <lasertag/uart.h>
+#include <avr/interrupt.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 #include <stdbool.h>
