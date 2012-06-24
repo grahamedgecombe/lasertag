@@ -1,0 +1,9 @@
+.*
+*~
+*.o
+*.d
+!.git*
+!.mailmap
+/lasertag
+/lasertag.hex
+
