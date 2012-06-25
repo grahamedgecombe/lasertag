@@ -29,7 +29,7 @@ void speaker_tone(int hz)
   /* Calculate and set the terminal count value for the specified frequency. */
   OCR0A = SPEAKER_TOGGLE_FREQ / (2 * hz) - 1;
 
-  /* Set the terminal count and connect output compare unit A to PD6. */
+  /* Connect output compare unit A to PD6. */
   TCCR0A |= (1 << COM0A0);
 }
 
