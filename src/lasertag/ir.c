@@ -325,9 +325,8 @@ ISR(INT0_vect)
 
 void ir_init(void)
 {
-  /* Set PB1 (IR LED) to be an output and pull it low. */
+  /* Set PB1 (IR LED) to be an output. */
   DDRB |= (1 << PB1);
-  PORTB &= ~(1 << PB1);
 
   /* Set PD2 (IR receiver) to be an input. */
   DDRD &= ~(1 << PD2);
