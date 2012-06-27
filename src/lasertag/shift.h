@@ -19,7 +19,7 @@ typedef struct
 /* Initializes the specified shift register. */
 void shift_init(shift_t *shift);
 
-/* Writes 8 bytes of data to the specified shift register. */
+/* Writes 8 bits of data to the specified shift register. */
 void shift_out(shift_t *shift, uint8_t data);
 
 #endif
