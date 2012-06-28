@@ -51,3 +51,15 @@ uint32_t clock_delta(uint32_t now, uint32_t prev)
     return UINT32_MAX - prev + now;
 }
 
+void clock_usdelay(unsigned int micros)
+{
+  uint32_t start = clock_micros();
+  while (clock_delta(clock_micros(), start) < micros);
+}
+
+void clock_msdelay(unsigned int millis)
+{
+  for (unsigned int i = 0; i < millis; i++)
+    clock_usdelay(1000);
+}
+
