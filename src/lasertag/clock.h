@@ -21,14 +21,10 @@ uint32_t clock_micros(void);
  */
 uint32_t clock_delta(uint32_t now, uint32_t prev);
 
-/*
- * Busy-wait for the given number of microseconds.
- */
+/* Busy-wait for the given number of microseconds. */
 void clock_usdelay(unsigned int micros);
 
-/*
- * Busy-wait for the given number of milliseconds.
- */
+/* Busy-wait for the given number of milliseconds. */
 void clock_msdelay(unsigned int millis);
 
 #endif
