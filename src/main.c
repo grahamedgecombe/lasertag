@@ -4,6 +4,7 @@
 #include <lasertag/ir.h>
 #include <lasertag/lcd.h>
 #include <lasertag/led.h>
+#include <lasertag/radio.h>
 #include <lasertag/speaker.h>
 #include <lasertag/spi.h>
 #include <lasertag/uart.h>
@@ -20,6 +21,7 @@ int main(void)
   speaker_init();
   lcd_init();
   spi_init();
+  radio_init();
 
   /* Enable interrupts. */
   sei();
