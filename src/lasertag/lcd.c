@@ -136,9 +136,6 @@ void lcd_init(void)
   clock_usdelay(4100);
 
   lcd_write4bits(LCD_CMD, 0x03);
-  clock_usdelay(4100);
-
-  lcd_write4bits(LCD_CMD, 0x03);
   clock_usdelay(100);
 
   lcd_write4bits(LCD_CMD, 0x03);
