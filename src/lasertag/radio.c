@@ -2,6 +2,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <lasertag/spi.h>
+#include <stdint.h>
 
 static uint16_t radio_spi_transfer(uint16_t value)
 {
