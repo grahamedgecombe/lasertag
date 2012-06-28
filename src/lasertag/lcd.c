@@ -55,7 +55,8 @@
 #define LCD_D7 5
 
 /* The port and pins used to control the shift register. */
-static shift_t lcd_shift = {
+static shift_t lcd_shift =
+{
   .ddr = &DDRC,
   .port = &PORTC,
   .data = PC3,
