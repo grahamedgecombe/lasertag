@@ -36,8 +36,10 @@ uint32_t clock_micros(void)
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
   {
-    ticks = TCNT2;
     overflows = clock_overflows;
+    ticks = TCNT2;
+    if ((TIFR2 & (1 << TOV2)) && ticks != UINT8_MAX)
+      overflows++;
   }
 
   return (uint32_t) ticks * CLOCK_USECS_PER_TICK + overflows * CLOCK_USECS_PER_OVERFLOW;
