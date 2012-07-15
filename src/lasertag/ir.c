@@ -25,6 +25,12 @@
 #define IR_ERROR     (200  / CLOCK_USECS_PER_TICK)
 
 /*
+ * The RX timeout in clock ticks, this is slightly longer than the maximum
+ * number of ticks that the carrier is expected to be turned on for.
+ */
+#define IR_TIMEOUT (IR_HEADER + IR_ERROR * 2)
+
+/*
  * The number of packets in the RX and TX buffers. As the IR receiver can only
  * manage around 800 bursts per second, the buffers can be kept small.
  */
@@ -101,6 +107,36 @@ static void ir_carrier_off(void)
 }
 
 /*
+ * Schedules an RX timeout interrupt.
+ *
+ * NB: interrupts must be disabled by the caller.
+ */
+static void ir_schedule_timeout_intr(void)
+{
+  /* Disable the output compare interrupt. */
+  TIMSK2 &= ~(1 << OCIE2B);
+
+  /* Reset the output compare flag to mask an immediate interrupt. */
+  TIFR2 |= (1 << OCF2B);
+
+  /* Set how many clcok ticks in the future the interrupt should be fired. */
+  OCR2B = TCNT2 + IR_TIMEOUT;
+
+  /* Enable the output compare interrupt. */
+  TIMSK2 |= (1 << OCIE2B);
+}
+
+/*
+ * Mask any further RX timeout interrupts.
+ *
+ * NB: interrupts must be disabled by the caller.
+ */
+static void ir_mask_timeout_intr(void)
+{
+  TIMSK2 &= ~(1 << OCIE2B);
+}
+
+/*
  * Schedules a transmit interrupt, which is used to change the state of the
  * carrier at the end of a mark or space, or to end the transmission.
  *
@@ -154,6 +190,13 @@ static void ir_start_tx(uint16_t packet)
 
   ir_carrier_on();
   ir_schedule_tx_intr(IR_HEADER);
+}
+
+ISR(TIMER2_COMPB_vect)
+{
+  /* The receive operation has timed out, reset the RX state. */
+  ir_rx_state = IR_STATE_IDLE;
+  ir_mask_timeout_intr();
 }
 
 ISR(TIMER2_COMPA_vect)
@@ -240,6 +283,8 @@ ISR(INT0_vect)
     {
       /* Corrupted packet - drop it. */
       ir_rx_state = IR_STATE_IDLE;
+      ir_mask_timeout_intr();
+      return;
     }
   }
   else if (ir_rx_state == IR_STATE_MARK && !rising)
@@ -263,6 +308,8 @@ ISR(INT0_vect)
       {
         /* Corrupted packet - drop it. */
         ir_rx_state = IR_STATE_IDLE;
+        ir_mask_timeout_intr();
+        return;
       }
     }
     else
@@ -284,6 +331,7 @@ ISR(INT0_vect)
       {
         /* Corrupted packet - drop it. */
         ir_rx_state = IR_STATE_IDLE;
+        ir_mask_timeout_intr();
         return;
       }
 
@@ -300,6 +348,8 @@ ISR(INT0_vect)
           ir_ringbuf_push(&ir_rx_buf, ir_rx_packet);
 
         ir_rx_state = IR_STATE_IDLE;
+        ir_mask_timeout_intr();
+        return;
       }
       else
       {
@@ -320,7 +370,11 @@ ISR(INT0_vect)
      * packet.
      */
     ir_rx_state = IR_STATE_IDLE;
+    ir_mask_timeout_intr();
+    return;
   }
+
+  ir_schedule_timeout_intr();
 }
 
 void ir_init(void)
