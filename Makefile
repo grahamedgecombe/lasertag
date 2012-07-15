@@ -12,8 +12,8 @@ AVRDUDE=avrdude
 
 CFLAGS=-mmcu=$(MCU) -DF_CPU=$(FREQ)UL -g -std=c11 -Wall -Wextra -pedantic \
        -fshort-enums -fpack-struct -ffunction-sections -fdata-sections -Os \
-       -Isrc
-LDFLAGS=-mmcu=$(MCU) -Wl,--gc-sections -Os
+       -Isrc -flto
+LDFLAGS=-mmcu=$(MCU) -Wl,--gc-sections -Os -flto
 
 TARGET=lasertag
 TARGET_HEX=$(TARGET).hex
