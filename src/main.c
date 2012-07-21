@@ -1,6 +1,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <lasertag/clock.h>
+#include <lasertag/game.h>
 #include <lasertag/ir.h>
 #include <lasertag/lcd.h>
 #include <lasertag/led.h>
@@ -22,6 +23,7 @@ int main(void)
   lcd_init();
   spi_init();
   radio_init();
+  game_init();
 
   /* Enable interrupts. */
   sei();
@@ -29,6 +31,7 @@ int main(void)
   for (;;)
   {
     led_cycle();
+    game_cycle();
   }
 }
 
