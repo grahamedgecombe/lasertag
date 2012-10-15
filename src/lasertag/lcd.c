@@ -68,7 +68,7 @@ static shift_t lcd_shift =
 static uint8_t lcd_row, lcd_col;
 static uint8_t lcd_flags;
 
-static void lcd_write4bits(bool rs, uint8_t value)
+static void lcd_write_nibble(bool rs, uint8_t value)
 {
   /* Write D4-D7 and RS pins, and raise the EN pin. */
   uint8_t pins = ((value & 0xF) << 2) | (1 << LCD_EN);
@@ -90,8 +90,8 @@ static void lcd_write4bits(bool rs, uint8_t value)
 static void lcd_write(bool rs, uint8_t value)
 {
   /* Write the 8-bit command/data in two goes. */
-  lcd_write4bits(rs, (value >> 4) & 0xF);
-  lcd_write4bits(rs, value & 0xF);
+  lcd_write_nibble(rs, (value >> 4) & 0xF);
+  lcd_write_nibble(rs, value & 0xF);
 
   /* Lower all the pins. */
   shift_out(&lcd_shift, 0);
@@ -133,15 +133,15 @@ void lcd_init(void)
    * Initialize the controller in 4-bit mode, the following sequence of
    * commands and delays is from the HD44780 datasheet.
    */
-  lcd_write4bits(LCD_CMD, 0x03);
+  lcd_write_nibble(LCD_CMD, 0x03);
   clock_usdelay(4100);
 
-  lcd_write4bits(LCD_CMD, 0x03);
+  lcd_write_nibble(LCD_CMD, 0x03);
   clock_usdelay(100);
 
-  lcd_write4bits(LCD_CMD, 0x03);
+  lcd_write_nibble(LCD_CMD, 0x03);
 
-  lcd_write4bits(LCD_CMD, 0x02);
+  lcd_write_nibble(LCD_CMD, 0x02);
 
   /* Set function flags. */
   uint8_t function = 0;
