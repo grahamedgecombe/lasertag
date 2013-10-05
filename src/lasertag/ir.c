@@ -119,7 +119,7 @@ static void ir_schedule_timeout_intr(void)
   /* Reset the output compare flag to mask an immediate interrupt. */
   TIFR2 |= (1 << OCF2B);
 
-  /* Set how many clcok ticks in the future the interrupt should be fired. */
+  /* Set how many clock ticks in the future the interrupt should be fired. */
   OCR2B = TCNT2 + IR_TIMEOUT;
 
   /* Enable the output compare interrupt. */
